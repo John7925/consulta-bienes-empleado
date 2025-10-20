@@ -2,7 +2,7 @@ function buscarBienes() {
   const empleado = document.getElementById("empleadoInput").value.trim();
   if (!empleado) return alert("Ingresa un número de empleado válido.");
 
-  const url = `https://script.google.com/macros/s/AKfycbXYZ1234567890/exec?empleado=${empleado}`;
+  const url = `https://script.google.com/macros/s/AKfycbx5YvLnxArkVGQz5q5FlGB0Xy9Yd-3QcmDSUfmUmyVKugy__kLQusN5WYmvXhlyxBmi/exec?empleado=${empleado}`;
 
   fetch(url)
     .then(res => res.json())
