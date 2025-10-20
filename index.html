@@ -2,26 +2,27 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Consulta de Bienes por Empleado</title>
+  <title>Consulta de Bienes Inventariables</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <img src="https://lh3.googleusercontent.com/d/19w-yxgHtMzgLlQABl4n6k8Q_ua2Yqp2R=s220" alt="Logo institucional">
-    <h2>Consulta de Bienes por Empleado</h2>
+  <header class="encabezado">
+    <div class="izquierda">RESGUARDO DE BIENES INVENTARIABLES</div>
+    <div class="derecha">EJERCICIO 2025</div>
   </header>
 
-  <hr>
+  <div class="busqueda">
+    <label for="empleadoInput">Número de empleado:</label>
+    <input type="text" id="empleadoInput" placeholder="Ej. E615222">
+    <button onclick="buscarBienes()">Buscar</button>
+    <button onclick="limpiarPantalla()">Limpiar</button>
+  </div>
 
-  <input type="text" id="empleadoInput" placeholder="Número de empleado">
-  <button onclick="buscarBienes()">Buscar bienes</button>
-  <button onclick="limpiarPantalla()">Limpiar pantalla</button>
-
-  <div id="result"></div>
+  <div id="resultados"></div>
 
   <footer>
-    Inventario de Bienes — Subdirección de Control de Bienes.
+    SUBDIRECCIÓN DE CONTROL DE BIENES — SECRETARÍA DE SALUD CDMX
   </footer>
 
   <script src="script.js"></script>
