@@ -17,7 +17,7 @@ function buscarEmpleado() {
       document.getElementById("unidadAdscripcion").textContent = data.adscripcion || "";
 
       // 📦 Muestra los bienes inventariables
-      mostrarBienesPorResguardante(idEmp, data.bienes || []);
+      mostrarBienesPorResguardante(idEmp, data.resultados || []);
     })
     .catch(error => {
       console.error("Error al consultar el empleado:", error);
@@ -46,10 +46,8 @@ function mostrarBienesPorResguardante(idEmp, bienes) {
   contenedor.innerHTML = ""; // Limpia contenido previo
 
   // 🔍 Filtra los bienes que pertenecen al empleado (columna Q = índice 16)
-  const bienesFiltrados = bienes.filter(fila => {
-  const valorCelda = String(fila[16]).trim(); // Columna Q
-  return valorCelda === idEmp;
-});
+  const bienesFiltrados = bienes;
+};
 
   // ⚠️ Si no hay bienes, muestra mensaje institucional
   if (bienesFiltrados.length === 0) {
@@ -83,7 +81,6 @@ function mostrarBienesPorResguardante(idEmp, bienes) {
 
     contenedor.appendChild(filaHTML);
   });
-}
 
 // 💰 Convierte el valor numérico en formato moneda con tres decimales
 function formatearCosto(valor) {
