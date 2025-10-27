@@ -46,7 +46,10 @@ function mostrarBienesPorResguardante(idEmp, bienes) {
   contenedor.innerHTML = ""; // Limpia contenido previo
 
   // 🔍 Filtra los bienes que pertenecen al empleado (columna Q = índice 16)
-  const bienesFiltrados = bienes.filter(fila => fila.length > 16 && fila[16] === idEmp);
+  const bienesFiltrados = bienes.filter(fila => {
+  const valorCelda = String(fila[16]).trim(); // Columna Q
+  return valorCelda === idEmp;
+});
 
   // ⚠️ Si no hay bienes, muestra mensaje institucional
   if (bienesFiltrados.length === 0) {
