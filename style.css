@@ -1,206 +1,90 @@
-/* Estilo general */
-body {
-  font-family: 'Roboto', sans-serif;
-  margin: 20px;
-  background-color: #ffffff;
-  color: #000000;
+// 🔍 FUNCIÓN PRINCIPAL: Consulta datos del empleado y sus bienes
+function buscarEmpleado() {
+  const idEmp = document.getElementById("idEmpInput").value.trim();
+  if (!idEmp) return;
+
+  // 🌐 Consulta al endpoint de Apps Script con el ID del empleado
+  fetch(`https://script.google.com/macros/s/AKfycbwH8lup-Vt43Zy8G_RAqBLneoEVdgpuCyTd410VpblmAs_6S8BePXuoZC4nkNe0TLBE/exec?idEmp=${idEmp}`)
+    .then(response => response.json())
+    .then(data => {
+      // 🧾 Llena los campos del resguardante (si están disponibles)
+      document.getElementById("nombreResguardante").textContent = data.nombre || "";
+      document.getElementById("numeroEmpleado").textContent = data.idEmp || "";
+      document.getElementById("rfcEmpleado").textContent = data.rfc || "";
+      document.getElementById("puestoEmpleado").textContent = data.puesto || "";
+      document.getElementById("regimenContratacion").textContent = data.regimen || "";
+      document.getElementById("areaAdscripcion").textContent = data.area || "";
+      document.getElementById("unidadAdscripcion").textContent = data.adscripcion || "";
+
+      // 📦 Muestra los bienes inventariables
+      mostrarBienesPorResguardante(idEmp, data.resultados || []);
+    })
+    .catch(error => {
+      console.error("Error al consultar el empleado:", error);
+    });
 }
 
-/* Fila de búsqueda */
-.fila-busqueda {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
+// 🧹 FUNCIÓN AUXILIAR: Limpia todos los campos visibles
+function limpiarCampos() {
+  const campos = [
+    "nombreResguardante", "numeroEmpleado", "rfcEmpleado",
+    "puestoEmpleado", "regimenContratacion",
+    "areaAdscripcion", "unidadAdscripcion", "tablaBienes"
+  ];
+  campos.forEach(id => {
+    const elemento = document.getElementById(id);
+    if (elemento) elemento.textContent = "";
+    if (id === "tablaBienes") elemento.innerHTML = "";
+  });
+  document.getElementById("idEmpInput").value = "";
 }
 
-/* Fila institucional: logo + texto */
-.fila-institucional {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: #ffffff;
-  color: #000000;
-  padding: 10px 0;
-  border-bottom: 2px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-}
+// 🔄 Muestra los bienes inventariables en la tabla, filtrando por número de empleado
+function mostrarBienesPorResguardante(idEmp, bienes) {
+  // 🧱 Contenedor donde se insertarán las filas
+  const contenedor = document.getElementById("tablaBienes");
+  contenedor.innerHTML = ""; // Limpia contenido previo
 
-/* Logo institucional */
-.logo-container {
-  flex: 0 0 25%;
-  max-width: 25%;
-}
+  // 🔍 Filtra los bienes que pertenecen al empleado (columna Q = índice 16)
+  const bienesFiltrados = bienes;
+};
 
-.logo {
-  width: 190%;
-  max-width: 410px;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
+  // ⚠️ Si no hay bienes, muestra mensaje institucional
+  if (bienesFiltrados.length === 0) {
+    contenedor.innerHTML = `
+      <div style="padding: 10px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; text-align: center; border-radius: 4px; margin-top: 10px;">
+        El trabajador o el servidor público no cuenta con bienes a su resguardo.
+      </div>
+    `;
+    return;
+  }
 
-/* Texto institucional */
-.texto-institucional {
-  flex: 1;
-  text-align: right;
-  font-size: 11.2px;
-  line-height: 1.4;
-}
+  // 🧮 Recorre cada bien y genera su fila HTML
+  bienesFiltrados.forEach((fila, index) => {
+    const filaHTML = document.createElement("div");
+    filaHTML.className = "fila-bien";
 
-/* Fila de encabezado institucional */
-.fila-encabezado {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #98989A;
-  color: #ffffff;
-  font-weight: bold;
-  padding: 10px 20px;
-  border-radius: 4px;
-}
+    // 🧩 Inserta cada celda en el orden del formato institucional
+    filaHTML.innerHTML = `
+      <div class="celda-bien">${index + 1}</div>                          <!-- CON. (contador) -->
+      <div class="celda-bien">${fila[3] || ""}</div>                     <!-- CLAVE CAMB. (columna D) -->
+      <div class="celda-bien">${fila[4] || ""}</div>                     <!-- DESCRIPCIÓN (columna E) -->
+      <div class="celda-bien">${fila[5] || ""}</div>                     <!-- MARCA (columna F) -->
+      <div class="celda-bien">${fila[6] || ""}</div>                     <!-- MODELO (columna G) -->
+      <div class="celda-bien">${fila[7] || ""}</div>                     <!-- SERIE (columna H) -->
+      <div class="celda-bien">${fila[8] || ""}</div>                     <!-- PLACAS (columna I) -->
+      <div class="celda-bien">${fila[9] || ""}</div>                     <!-- MOTOR (columna J) -->
+      <div class="celda-bien">${formatearCosto(fila[10])}</div>         <!-- COSTO (columna K, formato contabilidad) -->
+      <div class="celda-bien">${fila[1] || ""}</div>                     <!-- NÚMERO DE INVENTARIO (columna B) -->
+      <div class="celda-bien">${fila[13] || ""}</div>                    <!-- OBSERVACIONES (columna N) -->
+    `;
 
-.encabezado-izquierda {
-  text-align: left;
-  font-size: 16px;
-}
+    contenedor.appendChild(filaHTML);
+  });
 
-.encabezado-derecha {
-  text-align: right;
-  font-size: 16px;
-}
-
-/* Sistema de 12 columnas */
-.fila-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-/* Posicionamiento por columna */
-[class^="col-"] {
-  grid-column-start: var(--col-start);
-  grid-column-end: span var(--col-span);
-}
-
-.col-2 { --col-start: 2; }
-.col-5 { --col-start: 5; }
-.col-6 { --col-start: 6; }
-.col-7 { --col-start: 7; }
-.col-10 { --col-start: 10; }
-
-.col-span-1 { --col-span: 1; }
-.col-span-2 { --col-span: 2; }
-.col-span-3 { --col-span: 3; }
-.col-span-5 { --col-span: 5; }
-.col-span-9 { --col-span: 9; }
-
-/* Contenedor de cada bloque de dato */
-.fila-dato {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* Etiqueta gris claro alineada horizontalmente */
-.etiqueta-gris {
-  background-color: #98989A;
-  font-weight: bold;
-  font-size: 11px;
-  color: #333333;
-  padding: 4px 6px;
-  line-height: 1.2;
-  display: flex;
-  align-items: center;
-  height: 24px;
-  justify-content: flex-end; /* Alinea contenido interno a la derecha */
-  text-align: right;         /* Alinea texto a la derecha */
-
-}
-
-/* Respuesta en recuadro blanco con borde negro */
-.campo-dato {
-  font-size: 11px;
-  padding: 4px 6px;
-  background-color: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 3px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-}
-
-/* Texto legal sin recuadro */
-.texto-legal-sin-recuadro {
-  font-size: 10px;
-  line-height: 1.4;
-  color: #000000;
-  text-align: justify;
-}
-
-/* Encabezado de tabla de bienes */
-.encabezado-tabla {
-  display: grid;
-  grid-template-columns: 6fr 16fr 47fr 22fr 20fr 19fr 16fr 20fr 19fr 19fr 21fr;
-  gap: 0px;
-  margin-top: 10px;
-  background-color: #e6e6e6;
-  border: 1px solid #000000;
-  border-radius: 4px;
-}
-
-/* Celdas individuales del encabezado */
-.celda-encabezado {
-  font-size: 10px;
-  text-align: center;
-  padding: 2px 4px;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  background-color: #98989A;
-  color: #000000;
-  line-height: 1.2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 22px;
-}
-
-/* Fila de datos de bienes */
-.fila-bien {
-  display: grid;
-  grid-template-columns: 6fr 16fr 47fr 22fr 20fr 19fr 16fr 20fr 19fr 19fr 21fr;
-  gap: 0px;
-  border-bottom: 1px solid #000000;
-}
-
-/* Celda de datos de bienes */
-.celda-bien {
-  font-size: 10px;
-  padding: 2px 4px;
-  border-right: 1px solid #000000;
-  background-color: #ffffff;
-  color: #000000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 22px;
-  line-height: 1.2;
-}
-
-/* Elimina borde derecho en última celda */
-.celda-bien:last-child {
-  border-right: none;
-}
-
-/* - Formato contable en columna COSTO */
-.celda-bien.costo {
-  text-align: right;
-  font-family: monospace;
-  color: #004225;
+// 💰 Convierte el valor numérico en formato moneda con tres decimales
+function formatearCosto(valor) {
+  const num = parseFloat(valor);
+  if (isNaN(num)) return "";
+  return `$${num.toFixed(3)}`;
 }
