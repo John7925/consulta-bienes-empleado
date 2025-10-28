@@ -1,87 +1,65 @@
-function doGet(e) {
-  const idEmp = e.parameter.idEmp;
-  const esPruebaLocal = e.parameter.esPruebaLocal === true;
+function buscarEmpleado() {
+  const idEmp = document.getElementById("idEmpInput").value.trim();
+  if (!idEmp) return;
 
-  if (!idEmp) {
-    const error = { error: "ID EMP no proporcionado" };
-    return esPruebaLocal
-      ? error
-      : ContentService.createTextOutput(JSON.stringify(error))
-          .setMimeType(ContentService.MimeType.JSON);
-  }
+  fetch(`https://script.google.com/macros/s/AKfycbwsMbvilW2S_iy7G_jtx_9p_LxRkEJkPS2CQ79BtMlP8CoYx9gJsxr9c7LDpUkec0E/exec?idEmp=${idEmp}`)
+    .then(response => response.json())
+    .then(data => {
+      const referencia = data.resultados?.[0] || {};
 
-  const hoja = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("GENERAL");
-  if (!hoja) {
-    const error = { error: "Hoja 'GENERAL' no encontrada" };
-    return esPruebaLocal
-      ? error
-      : ContentService.createTextOutput(JSON.stringify(error))
-          .setMimeType(ContentService.MimeType.JSON);
-  }
+      document.getElementById("nombreResguardante").textContent = referencia.nombre || "";
+      document.getElementById("numeroEmpleado").textContent = referencia.idEmp || "";
+      document.getElementById("rfcEmpleado").textContent = referencia.rfc || "";
+      document.getElementById("puestoEmpleado").textContent = referencia.puesto || "";
+      document.getElementById("regimenContratacion").textContent = referencia.regimen || "";
+      document.getElementById("areaAdscripcion").textContent = referencia.area || "";
+      document.getElementById("unidadAdscripcion").textContent = referencia.adscripcion || "";
 
-  const datos = hoja.getDataRange().getValues();
-  Logger.log("Datos obtenidos:");
-  Logger.log(JSON.stringify(datos));
-
-  if (datos.length < 2) {
-    const error = { error: "No hay suficientes filas en la hoja" };
-    return esPruebaLocal
-      ? error
-      : ContentService.createTextOutput(JSON.stringify(error))
-          .setMimeType(ContentService.MimeType.JSON);
-  }
-
-  const coincidencias = [];
-
-  for (let i = 1; i < datos.length; i++) {
-    const fila = datos[i];
-    const valorCelda = String(fila[16]).trim(); // Columna ID EMP
-    Logger.log(`Revisando fila ${i + 1}: '${valorCelda}'`);
-
-    if (valorCelda.includes(idEmp)) {
-      coincidencias.push({
-        nombre: fila[17],
-        idEmp: fila[16],
-        rfc: fila[18],
-        puesto: fila[19],
-        regimen: fila[20],
-        area: fila[21],
-        adscripcion: fila[22],
-        bienes: fila
-      });
-    }
-  }
-
-  if (coincidencias.length === 0) {
-    const error = { error: "Empleado no encontrado en ninguna fila" };
-    return esPruebaLocal
-      ? error
-      : ContentService.createTextOutput(JSON.stringify(error))
-          .setMimeType(ContentService.MimeType.JSON);
-  }
-
-  const respuesta = {
-    totalCoincidencias: coincidencias.length,
-    resultados: coincidencias
-  };
-
-  return esPruebaLocal
-    ? respuesta
-    : ContentService.createTextOutput(JSON.stringify(respuesta))
-        .setMimeType(ContentService.MimeType.JSON);
+      mostrarBienesPorResguardante(data.resultados || []);
+    })
+    .catch(error => {
+      console.error("Error al consultar el empleado:", error);
+    });
 }
 
-// 🧪 Función de prueba local
-function pruebaLocal() {
-  const e = { parameter: { idEmp: "865222", esPruebaLocal: true } };
-  const salida = doGet(e);
+function mostrarBienesPorResguardante(registros) {
+  const contenedor = document.getElementById("tablaBienes");
+  contenedor.innerHTML = "";
 
-  Logger.log("Resultado de pruebaLocal:");
-  if (typeof salida === "object" && typeof salida.getContent === "function") {
-    Logger.log(salida.getContent());
-  } else {
-    Logger.log(JSON.stringify(salida));
+  if (registros.length === 0) {
+    contenedor.innerHTML = `
+      <div style="padding: 10px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; text-align: center; border-radius: 4px; margin-top: 10px;">
+        El trabajador o el servidor público no cuenta con bienes a su resguardo.
+      </div>
+    `;
+    return;
   }
 
-  return salida;
+  registros.forEach((registro, index) => {
+    const fila = registro.bienes;
+    const filaHTML = document.createElement("div");
+    filaHTML.className = "fila-bien";
+
+    filaHTML.innerHTML = `
+      <div class="celda-bien">${index + 1}</div>
+      <div class="celda-bien">${fila[3] || ""}</div>
+      <div class="celda-bien">${fila[4] || ""}</div>
+      <div class="celda-bien">${fila[5] || ""}</div>
+      <div class="celda-bien">${fila[6] || ""}</div>
+      <div class="celda-bien">${fila[7] || ""}</div>
+      <div class="celda-bien">${fila[8] || ""}</div>
+      <div class="celda-bien">${fila[9] || ""}</div>
+      <div class="celda-bien costo">${formatearCosto(fila[10])}</div>
+      <div class="celda-bien">${fila[1] || ""}</div>
+      <div class="celda-bien">${fila[13] || ""}</div>
+    `;
+
+    contenedor.appendChild(filaHTML);
+  });
+}
+
+function formatearCosto(valor) {
+  const num = parseFloat(valor);
+  if (isNaN(num)) return "";
+  return `$${num.toFixed(3)}`;
 }
