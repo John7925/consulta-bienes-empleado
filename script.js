@@ -5,28 +5,28 @@ function buscarEmpleado() {
   fetch(`https://script.google.com/macros/s/AKfycbwsMbvilW2S_iy7G_jtx_9p_LxRkEJkPS2CQ79BtMlP8CoYx9gJsxr9c7LDpUkec0E/exec?idEmp=${idEmp}`)
     .then(response => response.json())
     .then(data => {
-      const referencia = data.resultados?.[0] || {};
+      document.getElementById("nombreResguardante").textContent = data.nombre || "";
+      document.getElementById("numeroEmpleado").textContent = data.idEmp || "";
+      document.getElementById("rfcEmpleado").textContent = data.rfc || "";
+      document.getElementById("puestoEmpleado").textContent = data.puesto || "";
+      document.getElementById("regimenContratacion").textContent = data.regimen || "";
+      document.getElementById("areaAdscripcion").textContent = data.area || "";
+      document.getElementById("unidadAdscripcion").textContent = data.adscripcion || "";
 
-      document.getElementById("nombreResguardante").textContent = referencia.nombre || "";
-      document.getElementById("numeroEmpleado").textContent = referencia.idEmp || "";
-      document.getElementById("rfcEmpleado").textContent = referencia.rfc || "";
-      document.getElementById("puestoEmpleado").textContent = referencia.puesto || "";
-      document.getElementById("regimenContratacion").textContent = referencia.regimen || "";
-      document.getElementById("areaAdscripcion").textContent = referencia.area || "";
-      document.getElementById("unidadAdscripcion").textContent = referencia.adscripcion || "";
-
-      mostrarBienesPorResguardante(data.resultados || []);
+      // Extrae solo las filas de bienes
+      const bienes = (data.resultados || []).map(r => r.bienes);
+      mostrarBienesPorResguardante(bienes);
     })
     .catch(error => {
       console.error("Error al consultar el empleado:", error);
     });
 }
 
-function mostrarBienesPorResguardante(registros) {
+function mostrarBienesPorResguardante(bienes) {
   const contenedor = document.getElementById("tablaBienes");
   contenedor.innerHTML = "";
 
-  if (registros.length === 0) {
+  if (bienes.length === 0) {
     contenedor.innerHTML = `
       <div style="padding: 10px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; text-align: center; border-radius: 4px; margin-top: 10px;">
         El trabajador o el servidor público no cuenta con bienes a su resguardo.
@@ -35,8 +35,7 @@ function mostrarBienesPorResguardante(registros) {
     return;
   }
 
-  registros.forEach((registro, index) => {
-    const fila = registro.bienes;
+  bienes.forEach((fila, index) => {
     const filaHTML = document.createElement("div");
     filaHTML.className = "fila-bien";
 
