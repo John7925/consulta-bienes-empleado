@@ -13,7 +13,6 @@ function buscarEmpleado() {
       document.getElementById("areaAdscripcion").textContent = data.area || "";
       document.getElementById("unidadAdscripcion").textContent = data.adscripcion || "";
 
-      // Extrae solo las filas de bienes
       const bienes = (data.resultados || []).map(r => r.bienes);
       mostrarBienesPorResguardante(bienes);
     })

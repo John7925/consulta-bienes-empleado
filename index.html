@@ -9,17 +9,16 @@
 </head>
 <body>
 
-  <!-- PRIMERA FILA: Búsqueda -->
+  <!-- Búsqueda -->
   <div class="fila-busqueda">
     <input type="text" id="idEmpInput" placeholder="ID EMP" />
     <button onclick="buscarEmpleado()">Buscar</button>
     <button onclick="limpiarCampos()">Limpiar</button>
   </div>
 
-  <!-- SEGUNDA FILA: Espacio en blanco -->
   <div style="height: 10px;"></div>
 
-  <!-- TERCERA FILA: Logo y texto institucional -->
+  <!-- Encabezado institucional -->
   <div class="fila-institucional">
     <div class="logo-container">
       <img src="logo-cdmx.png" alt="Logo Institucional" class="logo" />
@@ -35,16 +34,14 @@
     </div>
   </div>
 
-  <!-- CUARTA FILA: Encabezado institucional -->
   <div class="fila-encabezado">
     <div class="encabezado-izquierda">RESGUARDO DE BIENES INVENTARIABLES</div>
     <div class="encabezado-derecha">EJERCICIO FISCAL 2025</div>
   </div>
 
-  <!-- QUINTA FILA: fila en blanco -->
   <div style="height: 5px;"></div>
 
-  <!-- SEXTA FILA: Nombre, ID EMP, RFC -->
+  <!-- Datos del resguardante -->
   <div class="fila-grid">
     <div class="col-2 col-span-1 etiqueta-gris">NOMBRE DEL<br>RESGUARDANTE:</div>
     <div class="col-3 col-span-3 campo-dato" id="nombreResguardante"></div>
@@ -56,10 +53,8 @@
     <div class="col-10 col-span-1 campo-dato" id="rfcEmpleado"></div>
   </div>
 
-  <!-- SÉPTIMA FILA: fila en blanco -->
   <div style="height: 2px;"></div>
 
-  <!-- OCTAVA FILA: Puesto y Régimen -->
   <div class="fila-grid">
     <div class="col-2 col-span-1 etiqueta-gris">PUESTO:</div>
     <div class="col-3 col-span-3 campo-dato" id="puestoEmpleado"></div>
@@ -68,38 +63,31 @@
     <div class="col-7 col-span-3 campo-dato" id="regimenContratacion"></div>
   </div>
 
-  <!-- NOVENA FILA: fila en blanco -->
   <div style="height: 2px;"></div>
 
-  <!-- DÉCIMA FILA: Área -->
   <div class="fila-grid">
     <div class="col-2 col-span-1 etiqueta-gris">ÁREA:</div>
     <div class="col-3 col-span-5 campo-dato" id="areaAdscripcion"></div>
   </div>
 
-  <!-- DÉCIMO PRIMERA FILA: fila en blanco -->
   <div style="height: 2px;"></div>
 
-  <!-- DÉCIMO SEGUNDA FILA: Unidad de adscripción -->
   <div class="fila-grid">
     <div class="col-2 col-span-1 etiqueta-gris">UNIDAD DE ADSCRIPCIÓN:</div>
     <div class="col-3 col-span-5 campo-dato" id="unidadAdscripcion"></div>
   </div>
 
-  <!-- DÉCIMO TERCERA FILA: fila en blanco -->
   <div style="height: 2px;"></div>
 
-  <!-- DÉCIMO CUARTA FILA: Texto legal sin recuadro -->
   <div class="fila-grid">
     <div class="col-2 col-span-9 texto-legal-sin-recuadro">
       LOS BIENES DE ESTA RELACIÓN SON DE MI RESPONSABILIDAD, POR LO QUE CUALQUIER TIPO DE MOVIMIENTO (CAMBIO DE USUARIO, ROBO, DESTRUCCIÓN ACCIDENTADA, BAJA, ETC.) SE INFORMARÁ POR OFICIO A LA JEFATURA DE UNIDAD DEPARTAMENTAL DE CONTROL DE BIENES
     </div>
   </div>
 
-  <!-- DÉCIMO QUINTA FILA: fila en blanco -->
   <div style="height: 2px;"></div>
 
-  <!-- ENCABEZADOS DE LA TABLA DE BIENES INVENTARIABLES -->
+  <!-- Encabezados de tabla -->
   <div class="encabezado-tabla">
     <div class="celda-encabezado">CON.</div>
     <div class="celda-encabezado">CLAVE CAMB.</div>
@@ -114,7 +102,6 @@
     <div class="celda-encabezado">OBSERVACIONES</div>
   </div>
 
-  <!-- FILAS DE BIENES INVENTARIABLES -->
   <div id="tablaBienes"></div>
 
 </body>
