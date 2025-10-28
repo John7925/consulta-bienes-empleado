@@ -197,3 +197,10 @@ body {
 .celda-bien:last-child {
   border-right: none;
 }
+
+/* - Formato contable en columna COSTO */
+.celda-bien.costo {
+  text-align: right;
+  font-family: monospace;
+  color: #004225;
+}
